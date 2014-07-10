@@ -1,0 +1,164 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 7</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    game.load.image('sky1', 'assets/sky.png')
+    game.load.image('sky', 'assets/put.png');
+    game.load.image('ground', 'assets/pl.png');
+    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.image('background3', 'assets/menu.png');
+    game.load.image('startgame', 'assets/startgame.png');
+}
+
+var player;
+var platforms;
+var platforms1;
+var cursors;
+var background1;
+var background2;
+var playing = 0;
+var logo;
+var i = 0;
+var sky;
+
+function create() {
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    cursors = game.input.keyboard.createCursorKeys();
+    
+}
+
+function update() {
+    if(playing == 0) {
+        if(i == 0){
+            game.add.sprite(0, 0, 'background3');
+            logo = game.add.sprite(150, 400, 'startgame');
+            i = 5;
+        }
+         logo.inputEnabled = true;
+        logo.events.onInputDown.add(function(){
+            playing = 1;
+            sky = game.add.sprite(0 , 0, 'sky1');
+            background1 = game.add.sprite(0, 0, 'sky');
+          //  game.physics.enable(background1, Phaser.Physics.ARCADE);
+            background2 = game.add.sprite(0, -600, 'sky');
+           // game.physics.enable(background2, Phaser.Physics.ARCADE);
+
+            //  We will enable physics for any object that is created in this group
+
+            // Here we create the ground.
+           // var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+            //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+            //ground.scale.setTo(2, 2);
+
+            //  This stops it from falling away when you jump on it
+            //ground.body.immovable = true;
+
+            //  Now let's create two ledges
+          //  platforms = game.add.sprite(540, 200, 'ground');
+
+           // game.physics.enable(platforms, Phaser.Physics.ARCADE);
+
+           // platforms.body.immovable = true;
+
+           // platforms1 = game.add.sprite(-540, 200, 'ground');
+
+           // game.physics.enable(platforms1, Phaser.Physics.ARCADE);
+
+          //  platforms1.body.immovable = true;
+
+            player = game.add.sprite(300, game.world.height - 150, 'dude');
+
+            game.physics.enable(player, Phaser.Physics.ARCADE);
+
+            player.body.bounce.y = 0.2;
+            player.body.gravity.y = 300;
+            player.body.collideWorldBounds = true;
+
+            player.animations.add('left', [0, 1, 2, 3], 10, true);
+            player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+        });
+    }
+
+    if(playing == 1){
+
+        function moveBackground(background) {
+            if (background.y >= 600) {
+                background.y = -600;
+                background.y += 20;
+            }
+            else {
+                background.y += 20;
+            }
+        }
+        moveBackground(background1);
+        moveBackground(background2);
+
+       // game.physics.arcade.collide(player, platforms1, platforms);
+
+
+        //  Collide the player and the stars with the platforms
+       // game.physics.arcade.collide(player, background1);
+
+        //  Reset the players velocity (movement)
+        player.body.velocity.x = 0;
+
+        if (cursors.left.isDown && player.body.x > 273)
+        {
+            //  Move to the left
+            player.body.velocity.x = -150;
+
+            player.animations.play('left');
+        }
+        else if (cursors.right.isDown && player.body.x < 480)
+        {
+            //  Move to the right
+            player.body.velocity.x = 150;
+
+            player.animations.play('right');
+        }
+        else
+        {
+            //  Stand still
+            player.animations.stop();
+
+            player.frame = 4;
+        }
+        
+        //  Allow the player to jump if they are touching the ground.
+        if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.body.velocity.y = -350;
+        }
+    }
+   function collisionHandler (obj1, obj2) {
+
+        //  The two sprites are colliding
+        game.stage.backgroundColor = '#992d2d';
+
+    }
+
+}
+</script>
+
+</body>
+</html>
