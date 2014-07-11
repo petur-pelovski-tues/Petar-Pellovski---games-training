@@ -1,0 +1,152 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 7</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    game.load.image('sky1', 'assets/sky.png')
+    game.load.image('sky', 'assets/put.png');
+    game.load.image('sheep', 'assets/sheep.png');
+    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.image('background3', 'assets/menu.png');
+    game.load.image('startgame', 'assets/startgame.png');
+}
+
+var player;
+var sheep;
+var sheep1;
+var cursors;
+var background1;
+var background2;
+var playing = 0;
+var logo;
+var i = 0;
+var sky;
+
+function create() {
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    cursors = game.input.keyboard.createCursorKeys();
+    
+}
+
+function update() {
+    if(playing == 0) {
+        if(i == 0){
+            game.add.sprite(0, 0, 'background3');
+            logo = game.add.sprite(150, 400, 'startgame');
+            i = 5;
+        }
+         logo.inputEnabled = true;
+        logo.events.onInputDown.add(function(){
+            playing = 1;
+            sky = game.add.sprite(0 , 0, 'sky1');
+            background1 = game.add.sprite(0, 0, 'sky');
+            background2 = game.add.sprite(0, -600, 'sky');
+            sheep = game.add.sprite(300, 0, 'sheep');
+            sheep1 = game.add.sprite(400, -600, 'sheep');
+
+            player = game.add.sprite(300, game.world.height - 150, 'dude');
+
+            game.physics.enable(player, Phaser.Physics.ARCADE);
+
+            player.body.bounce.y = 0.2;
+            player.body.gravity.y = 300;
+            player.body.collideWorldBounds = true;
+
+            player.animations.add('left', [0, 1, 2, 3], 10, true);
+            player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+        });
+    }
+
+    if(playing == 1){
+
+        function moveBackground(background) {
+            if (background.y >= 600) {
+                background.y = -600;
+                background.y += 10;
+            }
+            else {
+                background.y += 10;
+            }
+        }
+         function moveBackground1(background) {
+            if (background.y >= 600) {
+                 var y = Math.floor((Math.random() * 500) + 500);
+                background.y = -y;
+                background.y += 10;
+                var x = Math.floor((Math.random() * 100) + 300);
+                background.x = x;
+            }
+            else {
+                background.y += 10;
+            }
+        }
+        moveBackground(background1);
+        moveBackground(background2);
+        moveBackground1(sheep);
+        moveBackground1(sheep1);
+
+        if(sheep.y > 515 && sheep.y < 590){
+            if(player.body.x - sheep.x > -30 && player.body.x - sheep.x < 87){
+                alert(player.body.x);
+                alert(sheep.x);
+                playing = 3;
+            }
+        }
+        if(sheep1.y > 515 && sheep1.y < 590){
+            if(player.body.x - sheep1.x > -30 && player.body.x - sheep1.x < 87){
+                alert(player.body.x);
+                alert(sheep1.x);
+                playing = 3;
+            }
+        }
+
+        player.body.velocity.x = 0;
+
+        if (cursors.left.isDown && player.body.x > 273)
+        {
+            player.body.velocity.x = -500;
+
+            player.animations.play('left');
+        }
+        else if (cursors.right.isDown && player.body.x < 480)
+        {
+            player.body.velocity.x = 500;
+
+            player.animations.play('right');
+        }
+        else
+        {
+            player.animations.stop();
+
+            player.frame = 4;
+        }
+        
+        if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.body.velocity.y = -350;
+        }
+    }
+
+}
+</script>
+
+</body>
+</html>
