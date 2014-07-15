@@ -1,0 +1,335 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 7</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    game.load.image('sky1', 'assets/sky.png')
+    game.load.image('sky', 'assets/put.png');
+    game.load.image('sheep', 'assets/Sheep.png');
+    game.load.image('car', 'assets/car.png');
+    game.load.image('background3', 'assets/menu.png');
+    game.load.image('startgame', 'assets/startgame.png');
+    game.load.image('win', 'assets/win.png');
+    game.load.image('lose', 'assets/lose.png');
+    game.load.image('pause', 'assets/pause.png');
+    game.load.image('play', 'assets/play.png');
+    game.load.image('equal', 'assets/equal.png');
+    game.load.image('easy', 'assets/easy.png');
+    game.load.image('medium', 'assets/medium.png');
+    game.load.image('hard', 'assets/hard.png');
+    game.load.image('back', 'assets/back.png');
+}
+
+var player;
+var sheep;
+var sheep1;
+var cursors;
+var background1;
+var background2;
+var playing = 0;
+var logo;
+var i = 0;
+var sky;
+var crashing = 0;
+var finish = 0;
+var play;
+var pause;
+var background3;
+var lose;
+var win;
+var equal;
+var hardness = 5;
+var easy;
+var hard;
+var medium;
+var back;
+var crash1 = 0;
+var crash2 = 0;
+var crash3 = 0;
+var crash4 = 0;
+var c = 0;
+
+function create() {
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    cursors = game.input.keyboard.createCursorKeys();
+    
+}
+
+function update() {
+    if(playing == 0) {
+        if(i == 0){
+            if(c == 1){
+                background1.kill(true);
+                background2.kill();
+                sheep.kill();
+                sheep1.kill();
+                sheep2.kill();
+                sheep3.kill();
+                player.kill();
+                player1.kill();
+                back.kill();
+                pause.kill();
+                play.kill();
+            }
+            background3 = game.add.sprite(0, 0, 'background3');
+            logo = game.add.sprite(150, 400, 'startgame');
+            if(hardness == 5){
+                easy = game.add.sprite(0, 0, 'easy');
+                easy.inputEnabled = true;
+                easy.events.onInputDown.add(function(){
+                    hardness = 10;
+                });
+            }
+            if(hardness == 20){
+                medium.kill();
+                hard = game.add.sprite(0, 0, 'hard');
+                hard.inputEnabled = true;
+                hard.events.onInputDown.add(function(){
+                    hardness = 5;
+                });
+            }
+            if(hardness == 10){
+                easy.kill();
+                medium = game.add.sprite(0, 0, 'medium');
+                medium.inputEnabled = true;
+                medium.events.onInputDown.add(function(){
+                    hardness = 20;
+                });
+            }
+        }
+        logo.inputEnabled = true;
+        logo.events.onInputDown.add(function(){
+            if(hardness == 5){
+                easy.destroy(true);
+            }
+            if(hardness == 10){
+                medium.kill();
+            }
+            if(hardness == 20){
+                hard.kill();
+            }
+            playing = 1;
+            background3.destroy(true);
+            logo.destroy(true);
+            sky = game.add.sprite(0 , 0, 'sky1');
+            background1 = game.add.sprite(0, 0, 'sky');
+            background2 = game.add.sprite(0, -600, 'sky');
+            sheep = game.add.sprite(275, 0, 'sheep');
+            sheep1 = game.add.sprite(340, -600, 'sheep');
+            sheep2 = game.add.sprite(390, -1000, 'sheep');
+            sheep3 = game.add.sprite(455, -1600, 'sheep');
+
+            player = game.add.sprite(305, 350, 'car');
+            player1 = game.add.sprite(140, 350, 'car');
+            back = game.add.sprite(0, 250, 'back');
+            back.inputEnabled = true;
+            pause = game.add.sprite(0, 500, 'pause');
+            pause.inputEnabled = true;
+            play = game.add.sprite(0, 0, 'play');
+            play.inputEnabled = true;
+            finish = 0;
+            i = 5;
+
+        });
+    }
+
+    if(playing == 1){
+        c += 1;
+
+        function moveBackground(background) {
+            if (background.y >= 600) {
+                background.y = -600;
+                background.y += hardness;
+                finish += 1;
+                crash = 0;
+            }
+            else {
+                background.y += hardness;
+            }
+            if(finish == 50){
+                playing = 2;
+            }
+        }
+         function moveBackground1(background) {
+            if (background.y >= 600) {
+                 var y = Math.floor((Math.random() * 700) + 2000);
+                background.y = -y;
+                background.y += hardness;
+                var x = Math.floor((Math.random() * 65) + 275);
+                background.x = x;
+                crash1 = 0;
+                crash2 = 0;
+            }
+            else {
+                background.y += hardness;
+            }
+        }
+        function moveBackground2(background) {
+            if (background.y >= 600) {
+                var y = Math.floor((Math.random() * 700) + 2000);
+                background.y = -y;
+                background.y += hardness;
+                var x = Math.floor((Math.random() * 65) + 390);
+                background.x = x;
+                crash3 = 0;
+                crash4 = 0;
+            }
+            else {
+                background.y += hardness;
+            }
+        }
+        moveBackground(background1);
+        moveBackground(background2);
+        moveBackground1(sheep, crash1);
+        moveBackground1(sheep1, crash2);
+        moveBackground2(sheep2, crash3);
+        moveBackground2(sheep3, crash4);
+
+
+        if(sheep2.y > 400 && sheep2.y < 500){
+            if(player.x - sheep2.x > -165 && player.x - sheep2.x < -85){
+                if(crash3 == 0){
+                    player1.y -= 5;
+                    crash3 = 1;
+                }
+            }
+        }
+        if(sheep3.y > 400 && sheep3.y < 500){
+            if(player.x - sheep3.x > -165 && player.x - sheep3.x < -85){
+               if(crash4 == 0){
+                    player1.y -= 5;
+                    crash4 = 1;
+                }
+            }
+        }
+        if(sheep.y > (player1.y - 50) && sheep.y < (player1.y + 50)){
+            if(player1.x - sheep.x > -165 && player1.x - sheep.x < -85){
+                if(crash1 == 0){
+                    player1.y += 5;
+                    crash1 = 1;
+                }
+            }
+        }
+        if(sheep1.y > (player1.y - 50) && sheep1.y < (player1.y + 50)){
+            if(player1.x - sheep1.x > -165 && player1.x - sheep1.x < -85){
+               if(crash2 == 0){
+                    player1.y += 5;
+                    crash2 = 1;
+                }
+            }
+        }
+       if(sheep.y > (player1.y - 150) && sheep.y < player1.y){
+            if(player1.x - sheep.x > -165 && player1.x - sheep.x < -85){
+                if(345 - sheep.x >= 45){
+                    player1.x = 220;
+                }
+                else if(sheep.x - 275 >= 45){
+                    player1.x = 140;
+                }
+            }
+        }
+        if(sheep1.y > (player1.y - 150 ) && sheep1.y < player1.y){
+            if(player1.x - sheep1.x > -165 && player1.x - sheep1.x < -85){
+                if(345 - sheep1.x >= 45){
+                    player1.x = 220;
+                }
+                else if(sheep1.x - 275 >= 45){
+                    player1.x = 140;
+                }
+            }
+        }
+
+        if (cursors.left.isDown && player.x > 260)
+        {
+            if(hardness == 20){
+                player.x -= 10;
+            }
+            else if(hardness == 10){
+                player.x -= 7;
+            }
+            else{
+                player.x -= 5;
+            }
+        }
+
+        if(cursors.right.isDown && player.x < 345)
+        {
+            if(hardness == 20){
+                player.x += 10;
+            }
+            else if(hardness == 10){
+                player.x += 7;
+            }
+            else{
+                player.x += 5;
+            }
+        }
+
+        back.events.onInputDown.add(function(){
+            playing = 0;
+            i = 0;
+        });
+
+        pause.events.onInputDown.add(function(){
+            playing = 3;
+        });
+        
+    }
+
+    if(playing == 2){
+        if(player1.y < player.y){
+            lose = game.add.sprite(0, 0, 'lose');
+        }
+        if(player1.y > player.y){
+            win = game.add.sprite(0, 0, 'win');
+        }
+        if(player1.y == player.y){
+            equal = game.add.sprite(0, 0, 'equal');
+        }
+        playing = 3;
+    }
+
+    if(playing == 3){
+        play.events.onInputDown.add(function(){
+            playing = 1;
+            if(finish == 50){
+                finish = 0;
+                if(player1.y < player.y){
+                    lose.kill();
+                }
+                if(player1.y > player.y){
+                    win.kill();
+                }
+                if(player1.y == player.y){
+                    equal.kill();
+                }
+                player1.y = 350;
+                player.y = 350;
+                sheep.y = -1000;
+                sheep1.y = -1600;
+            }
+        });
+    }
+
+}
+</script>
+
+</body>
+</html>
